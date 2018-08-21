@@ -1,22 +1,12 @@
-# GNU Makefile
+CC=gcc
+CCFLAGS=-Wall -o
+TARGET=main
+OTHER_TARGETS=matrix
 
-CC = gcc 
-CCFLAGS = -Wall 
-LDFLAGS = 
-TARGET = main
-
-%.o: %.c
-	$(CC) $(CCFLAGS) -c $<
-
-%: %.o
-	$(CC) $(LDFLAGS) $^ -o $@ 
-
-all: $(TARGET)
-
-# Dependencias
-
-main: matrix.o main.c
-matrix.o: matrix.c matrix.h
+all:
+	@$(clean)
+	@$(CC) $(CCFLAGS) $(TARGET) -o main.c matrix.c matrix.h;
 
 clean:
-	rm -f *.o *~ $(TARGET)
+	@rm -f $(TARGET) $(OTHER_TARGETS);
+
