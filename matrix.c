@@ -10,6 +10,8 @@ matrix_t *matrix_create_block(int rows, int cols) {
 	matrix = malloc(sizeof(matrix_t));
 	double* bloco = malloc(sizeof(double) * rows * cols);
 	matrix->data = malloc(sizeof(double*) * rows);
+	matrix->rows = rows;
+	matrix->cols = cols;
 	for(int i = 0; i <= rows; i++) {
 		matrix->data[i] = bloco+i*cols;
 	}
@@ -21,6 +23,9 @@ matrix_t *matrix_create_pointers(int rows, int cols) {
 	matrix_t* matrix = NULL;
 	matrix = malloc(sizeof(matrix_t));
 	matrix->data = malloc(sizeof(double)*rows);
+	matrix->rows = rows;
+	matrix->cols = cols;
+
 	for(int i = 0; i <= rows; i++) {
 		matrix->data[i] = malloc(sizeof(double)*cols);
 	}
@@ -45,7 +50,7 @@ void matrix_destroy_block(matrix_t *m) {
 
 void matrix_randfill(matrix_t *m) {
 	int i, j;
-	
+
 	for (i = 0; i < m->rows; i++) {
 		for (j = 0; j < m->cols; j++) {
 			m->data[i][j] = random();
@@ -62,15 +67,16 @@ void matrix_fill(matrix_t *m, double val) {
 	}
 }
 
-matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *p (int, int)) {
-	p
-	
+matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
+
+		matrix_t *g = p(A->rows,B->cols);
+
 		for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < B->cols; j++) {
-			p->data =  A->data[i][j] * B->data[i][j];
+			g->data[i][j] =  A->data[i][j] * B->data[i][j];
 		}
 	}
-	return p;
+	return g;
 }
 
 void matrix_print(matrix_t *m) {
@@ -99,36 +105,45 @@ int matrix_equal(matrix_t*A, matrix_t *B) {
 	return 1;
 }
 
-matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *p (int, int)) {
+matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
+
+	matrix_t *g = p(A->rows,B->cols);
+
 	for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < B->cols; j++) {
-			p->data[i][j] =  A->data[i][j] + B->data[i][j];
+			g->data[i][j] =  A->data[i][j] + B->data[i][j];
 		}
 	}
-	
-	return p;
+
+	return g;
 }
 
-matrix_t *matrix_inversion(matrix_t *A, matrix_t *p (int, int)) {
-	int aux = matrix_transpose(A);
-	
+matrix_t *matrix_inversion(matrix_t *A, matrix_t *(*p) (int, int)) {
+
+	matrix_t *g = p(A->rows,A->cols);
+
+	matrix_t *aux = matrix_transpose(A,p);
+
 	for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < A->cols; j++) {
-			p->data[i][j] =  A->data[i][j] * aux->data[i][j];
+			g->data[i][j] =  A->data[i][j] * aux->data[i][j];
 		}
 	}
-	
-	return p;
+
+	return g;
 }
 
-matrix_t *matrix_transpose(matrix_t *A, matrix_t *p (int, int)) {
+matrix_t *matrix_transpose(matrix_t *A, matrix_t *(*p) (int, int)) {
+
+	matrix_t *g = p(A->rows,A->cols);
+
 	for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < A->cols; j++) {
-			p->data[i][j] =  A->data[j][i];
+			g->data[i][j] =  A->data[j][i];
 		}
 	}
-	
-	return p;
+
+	return g;
 }
 
 int matrix_determinant(matrix_t *A) {
@@ -140,14 +155,11 @@ int matrix_determinant(matrix_t *A) {
 		//Não é matriz quadrada
 		return -1;
 	}
-
-	matrix_t* aux;
-	memcpy(aux,A,A->rows*A->cols*sizeof(int));
+	matrix_t* aux = matrix_create_block(A->rows,A->cols);
 
 	if(n == 2){
 
-		det = A->data[0][0] * A->data[1][1]
-			-A->data[0][1]*A->data[1][0];
+		det = A->data[0][0] * A->data[1][1] - A->data[0][1]*A->data[1][0];
 
 	}else{
 		for(int i = 0; i < n; i++){
@@ -156,7 +168,7 @@ int matrix_determinant(matrix_t *A) {
 			for(int j = 0; j < n; j++){
 				for(int k = 0; k < n; k++){
 					if(j != 0 && k != i){
-						aux[ii][jj] = A->data[i][j];
+						aux->data[ii][jj] = A->data[i][j];
 						jj++;
 						if(jj>n-2){
 							ii++;
@@ -165,7 +177,7 @@ int matrix_determinant(matrix_t *A) {
 					}
 				}
 			}
-			det = det + 0*(A->data[0][i]*matrix_determinant(&aux));
+			det = det + o*(A->data[0][i]*matrix_determinant(aux));
 			o=-1*0;
 		}
 	}
