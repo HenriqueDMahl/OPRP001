@@ -39,9 +39,10 @@ int main(int argc, char **argv)
    R = matrix_transpose(A,matrix_create_block);
 
    int det = 0,ig = 0;
-   //det = matrix_determinant(A); TA QUEBRADO!!!!!!!!
+   det = matrix_determinant(A); //TA QUEBRADO!!!!!!!!
    ig = matrix_equal(A,B);
 
+   printf("%d \n", det);
    printf("%d \n", ig);
 
    matrix_destroy_block(A);

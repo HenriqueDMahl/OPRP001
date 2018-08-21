@@ -147,40 +147,35 @@ matrix_t *matrix_transpose(matrix_t *A, matrix_t *(*p) (int, int)) {
 }
 
 int matrix_determinant(matrix_t *A) {
-	int det = 0;
-	int ii = 0, jj = 0, o=1;
-	int n = A->rows;
+		int n = A->rows;
+		if(n == 1){
+        return a[0][0];
+    }else{
+      int det = 0;
+      int i, row, col, j_aux, i_aux;
 
-	if(A->rows != A->cols){
-		//Não é matriz quadrada
-		return -1;
-	}
-	matrix_t* aux = matrix_create_block(A->rows,A->cols);
-
-	if(n == 2){
-
-		det = A->data[0][0] * A->data[1][1] - A->data[0][1]*A->data[1][0];
-
-	}else{
-		for(int i = 0; i < n; i++){
-			ii = 0;
-			jj = 0;
-			for(int j = 0; j < n; j++){
-				for(int k = 0; k < n; k++){
-					if(j != 0 && k != i){
-						aux->data[ii][jj] = A->data[i][j];
-						jj++;
-						if(jj>n-2){
-							ii++;
-							jj=0;
-						}
-					}
-				}
-			}
-			det = det + o*(A->data[0][i]*matrix_determinant(aux));
-			o=-1*0;
-		}
-	}
-
-	return det;
+      //Escolhe a primeira linha para calcular os cofatores
+      for(i = 0; i < n; i++){
+          //ignora os zeros (zero vezes qualquer número é igual zero)
+          if (A->data[0][i] != 0) {
+							matrix_t A->dado[][]
+              double aux[n - 1][n - 1];
+              i_aux = 0;
+              j_aux = 0;
+              //Gera as matrizes para calcular os cofatores
+              for(row = 1; row < n; row++){
+                  for(col = 0; col < n; col++){
+                      if(col != i){
+                          aux[i_aux][j_aux] = a[row][col];
+                          j_aux++;
+                      }
+                  }
+                  i_aux++;
+                  j_aux = 0;
+              }
+              double factor = (i % 2 == 0)? a[0][i] : -a[0][i];
+              det = det + factor * detLaplace(n - 1, Aaux);
+          }
+      }
+      return det;
 }
