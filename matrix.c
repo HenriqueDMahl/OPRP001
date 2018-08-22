@@ -21,6 +21,7 @@ matrix_t *matrix_create_block(int rows, int cols) {
 
 matrix_t *matrix_create_pointers(int rows, int cols) {
 	matrix_t* matrix = NULL;
+
 	matrix = malloc(sizeof(matrix_t));
 	matrix->data = malloc(sizeof(double)*rows);
 	matrix->rows = rows;
@@ -60,6 +61,7 @@ void matrix_randfill(matrix_t *m) {
 
 void matrix_fill(matrix_t *m, double val) {
 	int i, j;
+
 	for (i = 0; i < m->rows; i++) {
 		for (j = 0; j < m->cols; j++) {
 			m->data[i][j] = val;
@@ -68,10 +70,9 @@ void matrix_fill(matrix_t *m, double val) {
 }
 
 matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
+	matrix_t *g = p(A->rows,B->cols);
 
-		matrix_t *g = p(A->rows,B->cols);
-
-		for (int i = 0; i < A->rows; i++) {
+	for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < B->cols; j++) {
 			g->data[i][j] =  A->data[i][j] * B->data[i][j];
 		}
@@ -81,6 +82,7 @@ matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
 
 void matrix_print(matrix_t *m) {
 	int i, j;
+
 	for (i = 0; i < m->rows; i++) {
 		for (j = 0; j < m->cols; j++) {
 			printf("%.17f ", m->data[i][j]);
@@ -106,7 +108,6 @@ int matrix_equal(matrix_t*A, matrix_t *B) {
 }
 
 matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
-
 	matrix_t *g = p(A->rows,B->cols);
 
 	for (int i = 0; i < A->rows; i++) {
@@ -119,9 +120,7 @@ matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
 }
 
 matrix_t *matrix_inversion(matrix_t *A, matrix_t *(*p) (int, int)) {
-
 	matrix_t *g = p(A->rows,A->cols);
-
 	matrix_t *aux = matrix_transpose(A,p);
 
 	for (int i = 0; i < A->rows; i++) {
@@ -134,7 +133,6 @@ matrix_t *matrix_inversion(matrix_t *A, matrix_t *(*p) (int, int)) {
 }
 
 matrix_t *matrix_transpose(matrix_t *A, matrix_t *(*p) (int, int)) {
-
 	matrix_t *g = p(A->rows,A->cols);
 
 	for (int i = 0; i < A->rows; i++) {
@@ -146,36 +144,37 @@ matrix_t *matrix_transpose(matrix_t *A, matrix_t *(*p) (int, int)) {
 	return g;
 }
 
-int matrix_determinant(matrix_t *A) {
-		int n = A->rows;
-		if(n == 1){
-        return a[0][0];
-    }else{
-      int det = 0;
-      int i, row, col, j_aux, i_aux;
+int matrix_determinant(matrix_t* matrix, matrix_t *(*p) (int,int)) {
+	if(matrix->rows == 1){//aims to find the 1x1 matrix case
+		return matrix->data[0][0];
+	} else{
+		int det = 0;
+		int i, row, col, j_aux, i_aux;
 
-      //Escolhe a primeira linha para calcular os cofatores
-      for(i = 0; i < n; i++){
-          //ignora os zeros (zero vezes qualquer número é igual zero)
-          if (A->data[0][i] != 0) {
-							matrix_t A->dado[][]
-              double aux[n - 1][n - 1];
-              i_aux = 0;
-              j_aux = 0;
-              //Gera as matrizes para calcular os cofatores
-              for(row = 1; row < n; row++){
-                  for(col = 0; col < n; col++){
-                      if(col != i){
-                          aux[i_aux][j_aux] = a[row][col];
-                          j_aux++;
-                      }
-                  }
-                  i_aux++;
-                  j_aux = 0;
-              }
-              double factor = (i % 2 == 0)? a[0][i] : -a[0][i];
-              det = det + factor * detLaplace(n - 1, Aaux);
-          }
-      }
-      return det;
+		//Chooses first line to calc cofactors
+		for(i = 0; i < matrix->rows; i++) {
+			//Ignores 0s because it is the multiplication identity
+			if (matrix->data[0][i] != 0) {
+				matrix_t* g = p(matrix->rows-1,matrix->cols-1);
+				g->rows = matrix->rows-1;
+				g->rows = matrix->rows-1;
+				i_aux = 0;
+				j_aux = 0;
+				//Gen matrices to calc cofactors
+				for(row = 1; row < matrix->rows; row++) {
+					for(col = 0; col < matrix->rows; col++){
+						if(col != i){
+							g->data[i_aux][j_aux] = matrix->data[row][col];
+							j_aux++;
+						}
+					}
+					i_aux++;
+					j_aux = 0;
+				}
+				double factor = (i % 2 == 0)? matrix->data[0][i] : -matrix->data[0][i];
+				det = det + factor * matrix_determinant(g, p);
+			}
+		}
+		return det;
+	}
 }

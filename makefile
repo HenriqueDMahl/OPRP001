@@ -6,7 +6,7 @@ OTHER_TARGETS=matrix
 all:
 	@$(clean)
 	@$(CC) $(CCFLAGS) $(TARGET) main.c matrix.c matrix.h;
-	@./main 5000 5000;
+	@./main 40000 40000;
 	@gprof -a main gmon.out > saida.txt;
 
 clean:

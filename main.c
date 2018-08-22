@@ -4,55 +4,57 @@
 #include <sys/time.h>
 #include "matrix.h"
 
-double wtime()
-{
-   struct timeval t;
-   gettimeofday(&t, NULL);
-   return t.tv_sec + t.tv_usec / 1000000.0;
+double wtime() {
+
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return t.tv_sec + t.tv_usec / 1000000.0;
 }
 
-int main(int argc, char **argv)
-{
-   double start_time, end_time;
-    int nrows, ncols;
+int main(int argc, char **argv) {
 
-   if ((argc != 3)) {
-      printf("Uso: %s <rows> <cols>\n", argv[0]);
-      exit(EXIT_FAILURE);
-   }
+	double start_time, end_time;
+	int nrows, ncols;
 
-   nrows = atoi(argv[1]);
-   ncols = atoi(argv[2]);
+	if ((argc != 3)) {
+		printf("Uso: %s <rows> <cols>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
 
-   start_time = wtime();
+	nrows = atoi(argv[1]);
+	ncols = atoi(argv[2]);
 
-   matrix_t *A = matrix_create_block(nrows,ncols);
-   matrix_t *B = matrix_create_block(nrows,ncols);
-   matrix_t *R = matrix_create_block(nrows,ncols);
+	start_time = wtime();
 
-   matrix_randfill(A);
-   matrix_randfill(B);
+	matrix_t *A = matrix_create_block(nrows,ncols);
+	matrix_t *B = matrix_create_block(nrows,ncols);
+	matrix_t *R = matrix_create_block(nrows,ncols);
 
-   R = matrix_multiply(A,B,matrix_create_block);
-   R = matrix_sum(A,B,matrix_create_block);
-   R = matrix_inversion(A,matrix_create_block);
-   R = matrix_transpose(A,matrix_create_block);
+//	matrix_fill(A, 2);
+//	matrix_fill(B, 2);
 
-   int det = 0,ig = 0;
-   det = matrix_determinant(A); //TA QUEBRADO!!!!!!!!
-   ig = matrix_equal(A,B);
+	//   R = matrix_multiply(A,B,matrix_create_block);
+	//   R = matrix_sum(A,B,matrix_create_block);
+	//   R = matrix_inversion(A,matrix_create_block);
+	//   R = matrix_transpose(A,matrix_create_block);
 
-   printf("%d \n", det);
-   printf("%d \n", ig);
+	int det = 0, ig = 0;
+//	matrix_print(A);
+	det = matrix_determinant(A, matrix_create_block);
 
-   matrix_destroy_block(A);
-   matrix_destroy_block(B);
-   matrix_destroy_block(R);
+	ig = matrix_equal(A,B);
 
-   end_time = wtime();
+	printf("%d \n", det);
+	printf("%d \n", ig);
 
-   printf("%d %d %f\n", nrows, ncols, end_time - start_time);
-   fflush(stdout);
+	matrix_destroy_block(A);
+	matrix_destroy_block(B);
+	matrix_destroy_block(R);
 
-   return EXIT_SUCCESS;
+	end_time = wtime();
+
+	printf("%d %d %f\n", nrows, ncols, end_time - start_time);
+	fflush(stdout);
+
+	return EXIT_SUCCESS;
 }
