@@ -27,6 +27,10 @@ void matrix_randfill(matrix_t *m);
 
 void matrix_fill(matrix_t *m, double val);
 
+void* call_matrix_sum_thread(void *args);
+
+matrix_t *matrix_sum_thread(matrix_t *A, matrix_t *B, matrix_t *R);
+
 matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int));
 
 matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int));

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "matrix.h"
+#include "thread.h"
 #include <math.h>
 
 matrix_t *matrix_create_block(int rows, int cols) {
@@ -117,6 +118,27 @@ matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
 	}
 
 	return g;
+}
+
+matrix_t *matrix_sum_thread(matrix_t *A, matrix_t *B, matrix_t *R) {
+	//matrix_t *g = p(A->rows,B->cols);
+
+	for (int i = 0; i < A->rows; i++) {
+		for (int j = 0; j < B->cols; j++) {
+			R->data[i][j] =  A->data[i][j] + B->data[i][j];
+		}
+	}
+
+	return R;
+}
+
+void *call_matrix_sum_thread(void *args){
+
+	DadosThread *p = (DadosThread *) args;
+
+	p->R = matrix_sum_thread(p->A,p->B,p->R);
+
+	return NULL;
 }
 
 matrix_t *matrix_inversion(matrix_t *A, matrix_t *(*p) (int, int)) {
