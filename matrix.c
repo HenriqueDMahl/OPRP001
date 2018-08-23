@@ -71,10 +71,14 @@ void matrix_fill(matrix_t *m, double val) {
 
 matrix_t *matrix_multiply(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
 	matrix_t *g = p(A->rows,B->cols);
-
+	int s = 0;
 	for (int i = 0; i < A->rows; i++) {
 		for (int j = 0; j < B->cols; j++) {
-			g->data[i][j] =  A->data[i][j] * B->data[i][j];
+			for (int k = 0; k < A->cols; k++){
+				s += A->data[i][k] * B->data[k][j];
+			}
+			g->data[i][j] = s;
+			s = 0;
 		}
 	}
 	return g;
@@ -121,11 +125,14 @@ matrix_t *matrix_sum(matrix_t *A, matrix_t *B, matrix_t *(*p) (int, int)) {
 
 matrix_t *matrix_inversion(matrix_t *A, matrix_t *(*p) (int, int)) {
 	matrix_t *g = p(A->rows,A->cols);
-	matrix_t *aux = matrix_transpose(A,p);
-
-	for (int i = 0; i < A->rows; i++) {
-		for (int j = 0; j < A->cols; j++) {
-			g->data[i][j] =  A->data[i][j] * aux->data[i][j];
+  int det = matrix_determinant(A,p);
+	if(det == 0)
+		return g = NULL;
+	else{
+		for (int i = 0; i < A->rows; i++) {
+			for (int j = 0; j < A->cols; j++) {
+				g->data[i][j] =  A->data[i][j] * aux->data[i][j];
+			}
 		}
 	}
 
